@@ -4,7 +4,7 @@ A simple, local to-do list that runs entirely in your browser — no install, no
 
 ## Getting started
 
-1. Download `todo.html`.
+1. Download `index.html`.
 2. Double-click it (or open it with your browser).
 3. Start adding tasks.
 
@@ -25,13 +25,13 @@ Everything is stored locally in your browser using `localStorage` — nothing is
 
 A few things to know:
 
-- Your tasks are tied to the **browser** you use to open the file, not the file itself. Opening `todo.html` in a different browser (or a different browser profile) will show an empty list.
+- Your tasks are tied to the **browser** you use to open the file, not the file itself. Opening `index.html` in a different browser (or a different browser profile) will show an empty list.
 - Clearing your browser's site data/cache for this file can erase your tasks.
 - There's currently no export/backup option — if you want to keep a permanent record, consider periodically noting down important tasks elsewhere.
 
 ## Customizing
 
-The whole app lives in a single file (`todo.html`), so it's easy to tweak:
+The whole app lives in a single file (`index.html`), so it's easy to tweak:
 
 - **Colors** — edit the CSS variables at the top of the `<style>` section (`--bg`, `--green`, `--text`, etc.).
 - **Font** — change the Google Fonts link and the `font-family` values.
