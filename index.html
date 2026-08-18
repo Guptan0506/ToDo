@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>To-Do</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:        #EEF3EC;
+    --surface:   #FFFFFF;
+    --border:    #DCE6D8;
+    --text:      #1E2C22;
+    --text-dim:  #7A8B7C;
+    --green:     #3F7D4F;
+    --green-light: #E4EFE2;
+  }
+
+  *{ box-sizing: border-box; }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    background: var(--bg);
+    font-family: 'Inter', sans-serif;
+    color: var(--text);
+    display:flex;
+    justify-content:center;
+    padding: 60px 20px;
+  }
+
+  .app{
+    width:100%;
+    max-width: 480px;
+  }
+
+  h1{
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin: 0 0 24px;
+    color: var(--green);
+  }
+
+  .add-row{
+    display:flex;
+    flex-wrap: wrap;
+    gap:8px;
+    margin-bottom: 20px;
+  }
+
+  .add-row input[type="text"]{
+    min-width: 160px;
+  }
+
+  .add-row input{
+    flex:1;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    color: var(--text);
+  }
+
+  .add-row input:focus{
+    outline: none;
+    border-color: var(--green);
+  }
+
+  .add-row input[type="date"]{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    color: var(--text);
+    max-width: 140px;
+  }
+
+  .add-row input[type="date"]:focus{
+    outline: none;
+    border-color: var(--green);
+  }
+
+  .due{
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    white-space: nowrap;
+    background: none;
+    border: none;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    padding: 3px 6px;
+    border-radius: 6px;
+  }
+
+  .due:hover{
+    background: var(--green-light);
+    color: var(--green);
+  }
+
+  .due.overdue{
+    color: #C0392B;
+    font-weight: 600;
+  }
+
+  .due-edit{
+    background: var(--surface);
+    border: 1px solid var(--green);
+    border-radius: 6px;
+    padding: 4px 6px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    color: var(--text);
+  }
+  
+  .due-edit:focus{ outline: none; 
+    background: var(--green);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 0 18px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+
+  .add-row button:hover{ opacity: 0.9; }
+
+  .filters{
+    display:flex;
+    gap: 16px;
+    margin-bottom: 14px;
+  }
+
+  .filters button{
+    background:none;
+    border:none;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--text-dim);
+    cursor:pointer;
+    padding: 2px 0;
+  }
+
+  .filters button.active{
+    color: var(--green);
+    font-weight: 600;
+  }
+
+  .count{
+    margin-left:auto;
+    color: var(--text-dim) !important;
+    font-weight: 400 !important;
+    cursor:default !important;
+  }
+
+  .list{
+    display:flex;
+    flex-direction:column;
+    gap: 8px;
+  }
+
+  .item{
+    display:flex;
+    flex-direction: column;
+    gap: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+
+  .item-main{
+    display:flex;
+    align-items:center;
+    gap: 12px;
+  }
+
+  .notes{
+    margin: 0 0 0 32px;
+    padding-left: 18px;
+    display:flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .notes li{
+    font-size: 0.85rem;
+    line-height: 1.4;
+    color: var(--text-dim);
+  }
+
+  .item.done .notes li{
+    text-decoration: line-through;
+  }
+
+  .notes-toggle{
+    margin-left: 32px;
+    align-self: flex-start;
+    background:none;
+    border:none;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--green);
+    cursor:pointer;
+    padding: 0;
+    opacity: 0.75;
+  }
+  .notes-toggle:hover{ opacity: 1; }
+
+  .notes-input{
+    margin-left: 32px;
+    width: calc(100% - 32px);
+    background: var(--green-light);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    color: var(--text);
+    resize: vertical;
+    min-height: 60px;
+  }
+  .notes-input:focus{
+    outline: none;
+    border-color: var(--green);
+  }
+
+  .notes-hint{
+    margin-left: 32px;
+    font-size: 0.72rem;
+    color: var(--text-dim);
+  }
+
+  .checkbox{
+    flex-shrink:0;
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    border: 2px solid var(--green);
+    background: transparent;
+    cursor:pointer;
+    position:relative;
+  }
+  .checkbox.checked{
+    background: var(--green);
+  }
+  .checkbox.checked::after{
+    content:'';
+    position:absolute;
+    left:5px; top:2px;
+    width:4px; height:8px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(40deg);
+  }
+
+  .text{
+    flex:1;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    word-break: break-word;
+  }
+
+  .item.done .text{
+    color: var(--text-dim);
+    text-decoration: line-through;
+  }
+
+  .remove{
+    flex-shrink:0;
+    background:none;
+    border:none;
+    font-size: 0.95rem;
+    color: var(--text-dim);
+    cursor:pointer;
+    opacity: 0;
+    transition: opacity 0.1s ease;
+  }
+  .item:hover .remove{ opacity: 1; }
+  .remove:hover{ color: #C0392B; }
+
+  .empty{
+    text-align:center;
+    padding: 40px 20px;
+    color: var(--text-dim);
+    font-size: 0.9rem;
+  }
+
+  footer{
+    margin-top: 28px;
+    text-align:center;
+    font-size: 0.75rem;
+    color: var(--text-dim);
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <h1>To-Do</h1>
+
+  <form class="add-row" id="addForm">
+    <input type="text" id="taskInput" placeholder="Add a task…" autocomplete="off" autofocus />
+    <input type="date" id="dueInput" aria-label="Due date" />
+    <button type="submit">Add</button>
+  </form>
+
+  <div class="filters">
+    <button data-filter="all" class="active">All</button>
+    <button data-filter="active">Active</button>
+    <button data-filter="done">Done</button>
+    <span class="count" id="countLabel"></span>
+  </div>
+
+  <div class="list" id="list"></div>
+
+  <footer>saved locally in this browser</footer>
+</div>
+
+<script>
+(function(){
+  const STORAGE_KEY = 'simple-todo-v1';
+  let tasks = [];
+  let filter = 'all';
+
+  function load(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(raw) tasks = JSON.parse(raw);
+    }catch(e){ console.error('Could not load tasks', e); }
+  }
+
+  function save(){
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+    }catch(e){ console.error('Could not save tasks', e); }
+  }
+
+  function formatDue(iso){
+    // parse as local date to avoid timezone off-by-one
+    const [y, m, d] = iso.split('-').map(Number);
+    const due = new Date(y, m - 1, d);
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    const diffDays = Math.round((due - today) / 86400000);
+
+    const label = due.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    let text = label;
+    if(diffDays === 0) text = 'Today';
+    else if(diffDays === 1) text = 'Tomorrow';
+    else if(diffDays === -1) text = 'Yesterday';
+
+    return { text, overdue: diffDays < 0 };
+  }
+
+  function render(){
+    const container = document.getElementById('list');
+    const visible = tasks.filter(t=>{
+      if(filter === 'active') return !t.done;
+      if(filter === 'done') return t.done;
+      return true;
+    });
+
+    container.innerHTML = '';
+
+    if(visible.length === 0){
+      const empty = document.createElement('div');
+      empty.className = 'empty';
+      empty.textContent = tasks.length === 0
+        ? 'Nothing here yet. Add your first task above.'
+        : 'Nothing in this view.';
+      container.appendChild(empty);
+    } else {
+      visible.slice().reverse().forEach(t=>{
+        if(!t.notes) t.notes = [];
+
+        const item = document.createElement('div');
+        item.className = 'item' + (t.done ? ' done' : '');
+        item.innerHTML = `
+          <div class="item-main">
+            <button class="checkbox ${t.done ? 'checked' : ''}" aria-label="Mark complete"></button>
+            <div class="text"></div>
+            <span class="due-slot"></span>
+            <button class="remove" aria-label="Remove task">✕</button>
+          </div>
+        `;
+        item.querySelector('.text').textContent = t.text;
+
+        const dueSlot = item.querySelector('.due-slot');
+        if(t.editingDue){
+          const dateInput = document.createElement('input');
+          dateInput.type = 'date';
+          dateInput.className = 'due-edit';
+          if(t.due) dateInput.value = t.due;
+
+          const finishEdit = ()=>{
+            t.due = dateInput.value || null;
+            t.editingDue = false;
+            save();
+            render();
+          };
+          dateInput.addEventListener('change', finishEdit);
+          dateInput.addEventListener('blur', finishEdit);
+          dueSlot.appendChild(dateInput);
+          setTimeout(()=>{ dateInput.focus(); }, 0);
+        } else {
+          const dueBtn = document.createElement('button');
+          dueBtn.className = 'due';
+          if(t.due){
+            const { text, overdue } = formatDue(t.due);
+            dueBtn.textContent = text;
+            if(overdue && !t.done) dueBtn.classList.add('overdue');
+          } else {
+            dueBtn.textContent = '+ Date';
+          }
+          dueBtn.addEventListener('click', ()=>{
+            t.editingDue = true;
+            render();
+          });
+          dueSlot.appendChild(dueBtn);
+        }
+
+        item.querySelector('.checkbox').addEventListener('click', ()=>{
+          t.done = !t.done;
+          save();
+          render();
+        });
+        item.querySelector('.remove').addEventListener('click', ()=>{
+          tasks = tasks.filter(x=>x.id !== t.id);
+          save();
+          render();
+        });
+
+        if(t.notes.length > 0 && !t.editingNotes){
+          const ul = document.createElement('ul');
+          ul.className = 'notes';
+          t.notes.forEach(line=>{
+            const li = document.createElement('li');
+            li.textContent = line;
+            ul.appendChild(li);
+          });
+          item.appendChild(ul);
+
+          const editBtn = document.createElement('button');
+          editBtn.className = 'notes-toggle';
+          editBtn.textContent = 'Edit details';
+          editBtn.addEventListener('click', ()=>{
+            t.editingNotes = true;
+            render();
+          });
+          item.appendChild(editBtn);
+
+        } else if(t.editingNotes){
+          const textarea = document.createElement('textarea');
+          textarea.className = 'notes-input';
+          textarea.value = t.notes.join('\n');
+          textarea.placeholder = 'One detail per line…';
+          item.appendChild(textarea);
+
+          const hint = document.createElement('div');
+          hint.className = 'notes-hint';
+          hint.textContent = 'Each line becomes a bullet point.';
+          item.appendChild(hint);
+
+          const doneBtn = document.createElement('button');
+          doneBtn.className = 'notes-toggle';
+          doneBtn.textContent = 'Save details';
+          doneBtn.addEventListener('click', ()=>{
+            t.notes = textarea.value.split('\n').map(l=>l.trim()).filter(l=>l.length > 0);
+            t.editingNotes = false;
+            save();
+            render();
+          });
+          item.appendChild(doneBtn);
+
+          setTimeout(()=>textarea.focus(), 0);
+
+        } else {
+          const addBtn = document.createElement('button');
+          addBtn.className = 'notes-toggle';
+          addBtn.textContent = '+ Add details';
+          addBtn.addEventListener('click', ()=>{
+            t.editingNotes = true;
+            render();
+          });
+          item.appendChild(addBtn);
+        }
+
+        container.appendChild(item);
+      });
+    }
+
+    const activeCount = tasks.filter(t=>!t.done).length;
+    document.getElementById('countLabel').textContent =
+      activeCount === 0 ? 'all done' : activeCount + ' left';
+  }
+
+  document.getElementById('addForm').addEventListener('submit', (e)=>{
+    e.preventDefault();
+    const input = document.getElementById('taskInput');
+    const dueInput = document.getElementById('dueInput');
+    const val = input.value.trim();
+    if(!val) return;
+    tasks.push({
+      id: Date.now().toString(36) + Math.random().toString(36).slice(2,7),
+      text: val,
+      done: false,
+      due: dueInput.value || null
+    });
+    input.value = '';
+    dueInput.value = '';
+    save();
+    render();
+  });
+
+  document.querySelectorAll('.filters button[data-filter]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      filter = btn.dataset.filter;
+      document.querySelectorAll('.filters button[data-filter]').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      render();
+    });
+  });
+
+  load();
+  render();
+})();
+</script>
+
+</body>
+</html>
